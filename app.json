@@ -1,0 +1,11 @@
+{
+  "expo": {
+    "name": "ludeko",
+    "slug": "ludeko",
+    "version": "1.0.0",
+    "assetBundlePatterns": [
+      "**/*"
+    ]
+  },
+  "name": "ludeko"
+}
