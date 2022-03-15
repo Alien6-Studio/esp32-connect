@@ -1,4 +1,6 @@
 rootProject.name = 'ludeko'
+include ':react-native-esptouch3'
+project(':react-native-esptouch3').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-esptouch3/android')
 
 apply from: new File(["node", "--print", "require.resolve('expo/package.json')"].execute(null, rootDir).text.trim(), "../scripts/autolinking.gradle");
 useExpoModules()
@@ -7,3 +9,7 @@ apply from: new File(["node", "--print", "require.resolve('@react-native-communi
 applyNativeModulesSettingsGradle(settings)
 
 include ':app'
+
+
+include ':react-native-wifi-reborn'
+project(':react-native-wifi-reborn').projectDir = new File(rootProject.projectDir, 	'../node_modules/react-native-wifi-reborn/android')
