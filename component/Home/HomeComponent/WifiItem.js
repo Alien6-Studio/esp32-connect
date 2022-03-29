@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Text, View, StyleSheet, Button, TextInput } from 'react-native';
-import { globalColor } from '../../../Style';
+import { globalStyle, globalColor } from '../../../Style';
 
 export default function WifiItem(props) {
 
@@ -28,7 +28,9 @@ export default function WifiItem(props) {
                         placeholder='Entrer le mot de passe'
                         onChangeText={setPassword}
                         value={password}
-                        style={style.input}
+                        style={globalStyle.input}
+                        placeholderTextColor="#fff"
+                        autoCapitalize='none'
                         autoFocus
                     />
                     <Button title="Connexion" onPress={() => props.changeWifi(props.wifi.SSID, password)} />
@@ -48,13 +50,5 @@ const style = StyleSheet.create({
         padding: 10,
         borderBottomWidth: 1,
         borderBottomColor: "#000",
-    },
-    input: {
-        marginTop: 10,
-        height: 40,
-        marginBottom: 10,
-        borderWidth: 1,
-        borderColor: globalColor.green,
-        padding: 10,
     }
 }); 

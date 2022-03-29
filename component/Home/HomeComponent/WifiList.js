@@ -5,51 +5,6 @@ import WifiManager from "react-native-wifi-reborn";
 import { globalColor } from '../../../Style';
 import WifiItem from './WifiItem';
 
-const WIFIS = [
-    {
-        SSID: "AndroidWifi",
-        BSSID: "02:15:b2:00:01:00",
-        frequency: 2447,
-        level: -30,
-    },
-    {
-        SSID: "AndroidWifi",
-        BSSID: "02:15:b2:00:01:00",
-        frequency: 5000,
-        level: -30,
-    },
-    {
-        SSID: "AndroidWifi2",
-        BSSID: "02:15:b2:00:01:01",
-        frequency: 5000,
-        level: -30,
-    },
-    {
-        SSID: "AndroidWifi2",
-        BSSID: "02:15:b2:00:01:01",
-        frequency: 2400,
-        level: -30,
-    },
-    {
-        SSID: "AndroidWifi3",
-        BSSID: "02:15:b2:00:01:02",
-        frequency: 2447,
-        level: -30,
-    },
-    {
-        SSID: "AndroidWifi4",
-        BSSID: "02:15:b2:00:01:03",
-        frequency: 2447,
-        level: -30,
-    },
-    {
-        SSID: "AndroidWifi5",
-        BSSID: "02:15:b2:00:01:03",
-        frequency: 5000,
-        level: -30,
-    }
-];
-
 export default function WifiList(props) {
 
     const [wifis, setWifis] = useState([]);
@@ -70,7 +25,7 @@ export default function WifiList(props) {
         setLoading(true);
         try {
             const data = await WifiManager.reScanAndLoadWifiList();
-            setIsDualBand(data.find(w => w.SSID === props.currentWifi.SSID && w.frequency < 3000) !== null);
+            setIsDualBand(data.find(w => w.SSID === props.currentWifi.SSID && w.frequency < 3000) !== undefined);
             const validWifi = data.filter(w => w.frequency < 3000 && !data.find(d => d.SSID === w.SSID && d.frequency > 3000))
             setWifis(validWifi);
         } catch (error) {
@@ -83,9 +38,21 @@ export default function WifiList(props) {
         <View>
             <Button onPress={reset} title='Actualiser' />
             {isDualBand ? (
-                <Text style={{ color: globalColor.red, marginBottom: 10 }}>Vous êtes connecté sur un réseau dual bande, choisissez un de ces réseaux compatible où éloignez-vous suffisamment de votre box internet  </Text>
+                <View>
+                    <Text style={{ color: globalColor.red, marginBottom: 10 }}>
+                        Le réseau Wi-Fi actuel n’est pas compatible, Si vous souhaitez utiliser ce réseau, 
+                        éloignez-vous au maximum de votre box internet ou paramétrez les réseaux Wi-Fi sur l’interface 
+                        de votre box</Text>
+                    <Link to={{
+                        screen: 'Information', initial: true, params: { screen: 'FAQ', initial: false }
+                    }}
+                        style={{ color: globalColor.blue, marginBottom: 10 }}>
+                        Explication</Link>
+                </View>
+            ) : loading ? (
+                <Text style={{ color: globalColor.red, marginBottom: 10 }}>Le réseau Wi-Fi actuel n’est pas compatible, Analyse des solutions en cours</Text>
             ) : (
-                <Text style={{ color: globalColor.red, marginBottom: 10 }}>Votre réseau Wi-fi n'est pas compatible, viellez choisir un de ces réseaux: </Text>
+                <Text style={{ color: globalColor.red, marginBottom: 10 }}>Le réseau Wi-Fi actuel n’est pas compatible, Connectez-vous à l’un des réseaux compatibles suivants: </Text>
             )}
             {loading && (
                 <View style={{ padding: 40 }}>
@@ -98,7 +65,7 @@ export default function WifiList(props) {
             <Link to={{
                 screen: 'Information', initial: true, params: { screen: 'FAQ', initial: false }
             }}
-                style={{ color: globalColor.white, marginVertical: 10 }}>
+                style={{ color: globalColor.blue, marginVertical: 10 }}>
                 pourquoi mon réseau wifi n'est pas compatible ?
             </Link>
         </View >

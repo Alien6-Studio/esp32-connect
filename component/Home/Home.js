@@ -9,7 +9,8 @@ import {
     SafeAreaView,
     ScrollView,
     TextInput,
-    TouchableOpacity
+    TouchableOpacity,
+    Platform
 } from 'react-native';
 import WifiManager from "react-native-wifi-reborn";
 import RNEsptouch from 'react-native-esptouch3';
@@ -18,17 +19,21 @@ import WifiList from './HomeComponent/WifiList';
 
 export default function Home({ navigation }) {
 
+    const [width, setWidth] = useState(Dimensions.get('window').width);
     const [wifi, setWifi] = useState(undefined);
     const [loading, setLoading] = useState(false);
     const [errors, setErrors] = useState([]);
     const [password, setPassword] = useState("");
     const [connectSuccess, setConnectSuccess] = useState(false);
+    const os = Platform.OS;
+
+    Dimensions.addEventListener('change', () => {
+        setWidth(Dimensions.get('window').width);
+    });
 
     useEffect(() => {
         getCurrentWifi();
     }, []);
-
-
 
     const changeWifi = async (ssid, password) => {
         if (password === "" || !password) {
@@ -44,7 +49,7 @@ export default function Home({ navigation }) {
             let msg = "";
             switch (error.code) {
                 case "couldNotScan": {
-                    msg = "Nombre de tentatives épuisées, veuillez attendaient 2min avant de réessayer";
+                    msg = "Nombre de tentatives épuisées, veuillez attendre 2min avant de réessayer";
                     break;
                 }
                 case "authenticationErrorOccurred": {
@@ -60,13 +65,38 @@ export default function Home({ navigation }) {
         setLoading(false);
     }
 
+    const getCurrentWifi = () => {
+        try {
+            if (os === "android")
+                return getCurrentWifiAndroid();
+            else
+                return getCurrentWifiIOS();
+        } catch {
+            setErrors(["Une erreur s'est produite, viellez réessayer!"]);
+        }
+    }
+
     const getCurrentWifiIOS = async () => {
         setErrors([]);
         setLoading(true);
+        const wifiEnabled = await WifiManager.isEnabled();
+        if (wifiEnabled) {
+            const ssid = await WifiManager.getCurrentWifiSSID();
+            if (ssid) {
+                const currentWifiConfig = {
+                    SSID: ssid,
+                };
+                setWifi(currentWifiConfig);
+            } else {
+                setErrors(["Vous n'êtes connecté à aucun réseau Wi-Fi"]);
+            }
+        } else {
+            setErrors(["Veuillez allumer le Wi-Fi de votre téléphone et actualiser"]);
+        }
         setLoading(false);
     }
 
-    const getCurrentWifi = async () => {
+    const getCurrentWifiAndroid = async () => {
         setErrors([]);
         setLoading(true);
         await PermissionsAndroid.request(
@@ -81,21 +111,26 @@ export default function Home({ navigation }) {
             if (e === PermissionsAndroid.RESULTS.GRANTED) {
                 const wifiEnabled = await WifiManager.isEnabled();
                 if (wifiEnabled) {
-                    const currentWifiConfig = {
-                        SSID: await WifiManager.getCurrentWifiSSID(),
-                        BSSID: await WifiManager.getBSSID(),
-                        frequency: await WifiManager.getFrequency(),
-                        status: await WifiManager.connectionStatus()
-                    };
-                    setWifi(currentWifiConfig);
+                    const ssid = await WifiManager.getCurrentWifiSSID();
+                    if (ssid) {
+                        const currentWifiConfig = {
+                            SSID: ssid,
+                            BSSID: await WifiManager.getBSSID(),
+                            frequency: await WifiManager.getFrequency(),
+                            status: await WifiManager.connectionStatus()
+                        };
+                        setWifi(currentWifiConfig);
+                    } else {
+                        setErrors(["Vous n'êtes connecté à aucun réseau Wi-Fi"]);
+                    }
                 } else {
-                    setErrors(["Veuillez allumer le Wi-Fi de votre téléphone et réessayer"]);
+                    setErrors(["Veuillez allumer le Wi-Fi de votre téléphone et actualiser"]);
                 }
             } else {
                 setErrors(["Pas de permission"]);
             }
         }).catch(err => {
-            setErrors(["Pas de permission"]);
+            setErrors(["Veuillez vous connecter à votre réseau Wi-Fi"]);
         });
         setLoading(false);
     }
@@ -121,13 +156,13 @@ export default function Home({ navigation }) {
                         setErrors(["Le Peson n'est pas encore prêt! Vérifier qu'il est bien en mode appairage"]);
                         break;
                     case -2:
-                        setErrors(["L'appareil ne supporte pas le Wifi 5Ghz, veuillez vous assurer que le Wifi actuellement connecté est 2.4Ghz."])
+                        setErrors(["L'appareil ne supporte pas le Wifi 5Ghz, veuillez vous assurer que le Wifi actuellement connecté est 2.4Ghz."]);
                         break;
                     case -3:
-                        setErrors(["Pas de connexion Wi-fi"])
+                        setErrors(["Pas de connexion Wi-fi"]);
                         break;
                     default:
-                        setErrors(["Une erreur s'est produite, viellez réessayer!"])
+                        setErrors(["La connexion du peson au Wi-Fi a échoué. Veuillez recommencer en vous assurant que le mot de passe Wi-Fi est correct et que le peson est bien en mode appairage. Si le problème persiste n’hésitez pas à nous contacter: assistant@ludeko.fr"]);
                 }
             }
         }).catch((error) => {
@@ -135,7 +170,6 @@ export default function Home({ navigation }) {
         });
         setLoading(false);
     }
-
 
     return (
         <View style={{ minHeight: '100%', backgroundColor: "#2c3c43" }}>
@@ -146,7 +180,7 @@ export default function Home({ navigation }) {
                             source={require('../../assets/logo_ludeko_light.png')}
                             style={{
                                 height: '100%',
-                                width: (Dimensions.get('window').width - 40),
+                                width: (width - 40),
                                 resizeMode: "center"
                             }}
                         />
@@ -159,31 +193,67 @@ export default function Home({ navigation }) {
                     {errors.length > 0 && (
                         <View style={{ padding: 40 }}>
                             <View style={globalStyle.errorContainer}>
-                                {errors.map((e, i) => <Text key={i} style={{ color: globalColor.white, fontSize: 16 }}>{e}</Text>)}
+                                {errors.map((e, i) =>
+                                    <Text key={i} style={{ color: globalColor.white, fontSize: 16 }}>{e}</Text>
+                                )}
                             </View>
                         </View>
                     )}
                     {connectSuccess ? (
-                        <View style={globalStyle.successContainer}>
-                            <Text style={{ color: globalColor.white }}>
-                                Félicitations, votre Peson est maintenant connecté !
+                        <View>
+                            <View style={globalStyle.successContainer}>
+                                <Text style={{ color: globalColor.white, fontSize: 26, textAlign: 'center' }}>
+                                    Votre peson est maintenant bien connecté à votre réseau Wi-Fi {wifi?.SSID}
+                                </Text>
+                            </View>
+                            <Text style={{ color: globalColor.white, fontSize: 16, textAlign: 'center', marginTop: 20 }}>
+                                Votre peson peut maintenant se connecter tout seul à votre Wi-Fi.
+                                Vous n’avez plus besoin de cette application tant que vous ne modifiez
+                                pas votre réseau Wi-Fi
                             </Text>
-                            <Text style={{ color: globalColor.white, fontSize: 22 }}>
-                                prochaine étape: Zéro déchet
-                            </Text>
+                            <TouchableOpacity style={globalStyle.connectBtnStyle} onPress={() => setConnectSuccess(false)} >
+                                <Text style={{ fontSize: 28, color: globalColor.white }}>Recommencer</Text>
+                            </TouchableOpacity>
                         </View>
                     ) : (
                         <View style={{ padding: 20 }}>
-                            {wifi ? (
+                            {wifi && wifi.SSID ? (
                                 <View>
-                                    <Text style={{ color: globalColor.white, fontSize: 24, marginBottom: 10 }}>WI-FI : {wifi.SSID}</Text>
-                                    {wifi.frequency > 3000 ? (
+                                    <Text style={{ color: globalColor.white, fontSize: 24, marginBottom: 10 }}>
+                                        WI-FI : {wifi.SSID}
+                                    </Text>
+                                    {os === "android" ? (
                                         <View>
-                                            <WifiList changeWifi={changeWifi} currentWifi={wifi} getCurrentWifi={getCurrentWifi} />
+                                            {
+                                                wifi.frequency > 3000 ? (
+                                                    <View>
+                                                        <WifiList changeWifi={changeWifi} currentWifi={wifi} getCurrentWifi={getCurrentWifi} />
+                                                    </View>
+                                                ) : (
+                                                    <View>
+                                                        <Text style={{ color: globalColor.white, fontSize: 24 }}>Mot de passe :</Text>
+                                                        <TextInput
+                                                            autoCorrect={false}
+                                                            placeholder='Entrer le mot de passe de votre réseau Wi-Fi'
+                                                            onChangeText={setPassword}
+                                                            value={password}
+                                                            style={globalStyle.input}
+                                                            placeholderTextColor="#fff"
+                                                            autoCapitalize='none'
+                                                        />
+                                                        <View style={{ marginVertical: 50 }}>
+                                                            <Text style={{ color: globalColor.white, fontStyle: 'italic', textAlign: 'center' }}>Mettez votre peson en mode appairage avant de cliquer sur le bouton ci-dessous</Text>
+                                                            <TouchableOpacity style={globalStyle.connectBtnStyle} onPress={() => smartConnectEsp()} >
+                                                                <Text style={{ fontSize: 28, color: globalColor.white }}>Connecter Mon Peson</Text>
+                                                            </TouchableOpacity>
+                                                        </View>
+                                                    </View>
+                                                )
+                                            }
                                         </View>
                                     ) : (
                                         <View>
-                                            <Text style={{ color: globalColor.white }}>Mot de passe :</Text>
+                                            <Text style={{ color: globalColor.white, fontSize: 24 }}>Mot de passe :</Text>
                                             <TextInput
                                                 autoCorrect={false}
                                                 placeholder='Entrer le mot de passe de votre wifi'
@@ -191,9 +261,17 @@ export default function Home({ navigation }) {
                                                 value={password}
                                                 style={globalStyle.input}
                                             />
-                                            <TouchableOpacity style={globalStyle.connectBtnStyle} onPress={() => smartConnectEsp()} >
-                                                <Text style={{ fontSize: 28, color: globalColor.white }}>Connecter Mon Peson</Text>
-                                            </TouchableOpacity>
+                                            <View style={{ marginVertical: 50 }}>
+                                                <Text style={{ color: globalColor.white, fontStyle: 'italic', textAlign: 'center' }}>Mettez votre peson en mode appairage avant de cliquer sur le bouton ci-dessous</Text>
+                                                <TouchableOpacity style={globalStyle.connectBtnStyle} onPress={() => smartConnectEsp()} >
+                                                    <Text style={{ fontSize: 28, color: globalColor.white }}>Connecter Mon Peson</Text>
+                                                </TouchableOpacity>
+                                            </View>
+                                            <View style={{ padding: 40 }}>
+                                                <View style={globalStyle.errorContainer}>
+                                                    <Text style={{ color: globalColor.white, fontSize: 16 }}>test</Text>
+                                                </View>
+                                            </View>
                                         </View>
                                     )}
                                 </View>

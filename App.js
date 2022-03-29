@@ -19,6 +19,8 @@ export default function App() {
           screenOptions={({ route }) => ({
             headerShown: false,
             tabBarShowLabel: false,
+            tabBarActiveBackgroundColor: "#fff", 
+            tabBarInactiveBackgroundColor: "#dfdfdf",
             tabBarIcon: ({ focused, color, size }) => {
               switch (route.name) {
                 case "Accueil":

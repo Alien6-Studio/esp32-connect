@@ -15,12 +15,17 @@ export const globalStyle = StyleSheet.create({
         marginBottom: 50,
         padding: 10 
     },
+    section: {
+        padding: 10 
+    },
     errorContainer: {
         borderRadius: 5,
         backgroundColor: "#ee2e3f75",
         padding: 10
     },
     successContainer: {
+        marginTop: 50, 
+        marginHorizontal: 20,
         borderRadius: 5,
         backgroundColor: "#94c438",
         padding: 10,
@@ -33,6 +38,7 @@ export const globalStyle = StyleSheet.create({
         borderWidth: 1,
         borderColor: globalColor.green,
         padding: 10,
+        color: globalColor.white
     },
     connectBtnStyle: {
         margin: 20,
@@ -64,5 +70,9 @@ export const globalStyle = StyleSheet.create({
         marginBottom: 5,
         fontSize: 14,
         textAlign: "justify"
+    },
+    link: {
+        color: globalColor.blue,
+        margin: 5
     }
 });
