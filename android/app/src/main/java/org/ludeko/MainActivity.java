@@ -1,4 +1,4 @@
-package com.ludeko;
+package org.ludeko;
 
 import android.os.Build;
 import android.os.Bundle;
