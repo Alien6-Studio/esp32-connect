@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "Ludeko connexion peson",
-    "slug": "ludeko-connexion-peson",
+    "name": "ESP32 Connect",
+    "slug": "esp32-connect",
     "version": "1.0.0",
     "assetBundlePatterns": [
       "**/*"

@@ -13,12 +13,7 @@ export default function MyStack() {
                         <View style={globalStyle.section}>
                             <Text style={globalStyle.h3}>Présentation </Text>
                             <Text style={globalStyle.text}>
-                                Ludeko est une entreprise de l’économie sociale et solidaire qui agit pour la réduction des déchets.
-                                Cette application permet de connecter le peson Ludeko au réseau Wi-Fi afin de simplifier le suivi
-                                quotidien du poids de déchets. Le peson s’utilise avec votre compte sur la plateforme 
-                                <Text onPress={() => Linking.openURL("https://app.ludeko.fr/")} style={{color: globalColor.blue}}> https://app.ludeko.fr </Text>
-                                qui permet de visualiser toutes les pesées et l’évolution de la production de
-                                déchets
+                                ESP32 Connect est une application qui permet de connecter une puce ESP32 a un réseau wifi
                             </Text>
                         </View>
                         <View style={globalStyle.section}>
@@ -67,18 +62,6 @@ export default function MyStack() {
                                     </View>
                                 </CollapseBody>
                             </Collapse>
-                        </View>
-                        <View style={globalStyle.section}>
-                            <Text style={globalStyle.h3}>CONFIDENTIALITE ET MENTIONS LEGALES</Text>
-                            <Text style={globalStyle.link} onPress={() => Linking.openURL("https://app.ludeko.fr/mentions")}>
-                                Mentions légales</Text>
-                            <Text style={globalStyle.link} onPress={() => Linking.openURL("https://app.ludeko.fr/charte")}>
-                                Charte sur le respect de la vie privée</Text>
-                        </View>
-                        <View style={globalStyle.section}>
-                            <Text style={globalStyle.h3}>Contact</Text>
-                            <Text style={globalStyle.link} onPress={() => Linking.openURL("mailto:assistant@ludeko.fr")}>
-                                assistant@ludeko.fr</Text>
                         </View>
                     </View>
                 </ScrollView>

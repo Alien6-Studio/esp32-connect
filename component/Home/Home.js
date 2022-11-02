@@ -153,7 +153,7 @@ export default function Home({ navigation }) {
                 // ESPTouch failed
                 switch (res.code) {
                     case -1:
-                        setErrors(["Le Peson n'est pas encore prêt! Vérifier qu'il est bien en mode appairage"]);
+                        setErrors(["La puce n'est pas encore prêt! Vérifier qu'il est bien en mode appairage"]);
                         break;
                     case -2:
                         setErrors(["L'appareil ne supporte pas le Wifi 5Ghz, veuillez vous assurer que le Wifi actuellement connecté est 2.4Ghz."]);
@@ -162,7 +162,7 @@ export default function Home({ navigation }) {
                         setErrors(["Pas de connexion Wi-fi"]);
                         break;
                     default:
-                        setErrors(["La connexion du peson au Wi-Fi a échoué. Veuillez recommencer en vous assurant que le mot de passe Wi-Fi est correct et que le peson est bien en mode appairage. Si le problème persiste n’hésitez pas à nous contacter: assistant@ludeko.fr"]);
+                        setErrors(["La connexion de la puce au Wi-Fi a échoué. Veuillez recommencer en vous assurant que le mot de passe Wi-Fi est correct et que la puce est bien en mode appairage."]);
                 }
             }
         }).catch((error) => {
@@ -175,15 +175,8 @@ export default function Home({ navigation }) {
         <View style={{ minHeight: '100%', backgroundColor: "#2c3c43" }}>
             <SafeAreaView style={{ flex: 1 }}>
                 <ScrollView>
-                    <View style={{ height: 200, padding: 20 }}>
-                        <Image
-                            source={require('../../assets/logo_ludeko_light.png')}
-                            style={{
-                                height: '100%',
-                                width: (width - 40),
-                                resizeMode: "center"
-                            }}
-                        />
+                    <View style={{ paddingTop: 50, textAlign: 'center' }}>
+                        <Text style={{ textAlign: 'center', fontSize: 42, color: 'white' }}> ESP32 Connect </Text>
                     </View>
                     {loading && (
                         <View style={{ padding: 40 }}>
@@ -203,14 +196,9 @@ export default function Home({ navigation }) {
                         <View>
                             <View style={globalStyle.successContainer}>
                                 <Text style={{ color: globalColor.white, fontSize: 26, textAlign: 'center' }}>
-                                    Votre peson est maintenant bien connecté à votre réseau Wi-Fi {wifi?.SSID}
+                                    Votre puce est maintenant bien connecté à votre réseau Wi-Fi {wifi?.SSID}
                                 </Text>
                             </View>
-                            <Text style={{ color: globalColor.white, fontSize: 16, textAlign: 'center', marginTop: 20 }}>
-                                Votre peson peut maintenant se connecter tout seul à votre Wi-Fi.
-                                Vous n’avez plus besoin de cette application tant que vous ne modifiez
-                                pas votre réseau Wi-Fi
-                            </Text>
                             <TouchableOpacity style={globalStyle.connectBtnStyle} onPress={() => setConnectSuccess(false)} >
                                 <Text style={{ fontSize: 28, color: globalColor.white }}>Recommencer</Text>
                             </TouchableOpacity>
@@ -242,9 +230,9 @@ export default function Home({ navigation }) {
                                                             autoCapitalize='none'
                                                         />
                                                         <View style={{ marginVertical: 50 }}>
-                                                            <Text style={{ color: globalColor.white, fontStyle: 'italic', textAlign: 'center' }}>Mettez votre peson en mode appairage avant de cliquer sur le bouton ci-dessous</Text>
+                                                            <Text style={{ color: globalColor.white, fontStyle: 'italic', textAlign: 'center' }}>Mettez votre puce en mode appairage avant de cliquer sur le bouton ci-dessous</Text>
                                                             <TouchableOpacity style={globalStyle.connectBtnStyle} onPress={() => smartConnectEsp()} >
-                                                                <Text style={{ fontSize: 28, color: globalColor.white }}>Connecter Mon Peson</Text>
+                                                                <Text style={{ fontSize: 28, color: globalColor.white }}>Connecter</Text>
                                                             </TouchableOpacity>
                                                         </View>
                                                     </View>
@@ -260,17 +248,14 @@ export default function Home({ navigation }) {
                                                 onChangeText={setPassword}
                                                 value={password}
                                                 style={globalStyle.input}
+                                                placeholderTextColor="#fff"
+                                                autoCapitalize='none'
                                             />
                                             <View style={{ marginVertical: 50 }}>
-                                                <Text style={{ color: globalColor.white, fontStyle: 'italic', textAlign: 'center' }}>Mettez votre peson en mode appairage avant de cliquer sur le bouton ci-dessous</Text>
+                                                <Text style={{ color: globalColor.white, fontStyle: 'italic', textAlign: 'center' }}>Mettez votre puce en mode appairage avant de cliquer sur le bouton ci-dessous</Text>
                                                 <TouchableOpacity style={globalStyle.connectBtnStyle} onPress={() => smartConnectEsp()} >
-                                                    <Text style={{ fontSize: 28, color: globalColor.white }}>Connecter Mon Peson</Text>
+                                                    <Text style={{ fontSize: 28, color: globalColor.white }}>Connecter</Text>
                                                 </TouchableOpacity>
-                                            </View>
-                                            <View style={{ padding: 40 }}>
-                                                <View style={globalStyle.errorContainer}>
-                                                    <Text style={{ color: globalColor.white, fontSize: 16 }}>test</Text>
-                                                </View>
                                             </View>
                                         </View>
                                     )}

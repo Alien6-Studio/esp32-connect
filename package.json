@@ -1,5 +1,5 @@
 {
-  "name": "ludeko",
+  "name": "esp32connect",
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
